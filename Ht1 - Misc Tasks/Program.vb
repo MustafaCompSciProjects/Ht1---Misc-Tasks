@@ -37,7 +37,7 @@ Module Program
             End If
 
         End While
-
+        End
     End Function
 
     Function SelectProgram()
@@ -46,11 +46,11 @@ Which program would you like to use
 1. Factorial Finder
 2. Speed Tracker
 3. Thief
-4.
-5.
-6.
-7.
-8.
+4. Classification
+5. Fruit Machine
+6. Unit Converter
+7. Arithmetic Test
+8. Happy Numbers
 9. Quit
 ")
         Return GetNumericalInput(False, 1, 9)
@@ -72,7 +72,8 @@ Which program would you like to use
                 Console.Clear()
                 Thief()
             ElseIf ProgramSelected = 4 Then
-                Console.WriteLine("4")
+                Console.Clear()
+                Classification()
             ElseIf ProgramSelected = 5 Then
                 Console.WriteLine("5")
             ElseIf ProgramSelected = 6 Then
@@ -116,6 +117,7 @@ Which program would you like to use
                 Console.WriteLine("Please enter a valid time in format HH:MM:SS")
             End Try
         End While
+        End
     End Function
     Function GetLicensePlate()
         'https://assets.publishing.service.gov.uk/media/6694e379fc8e12ac3edafc60/inf104-vehicle-registration-numbers-and-number-plates.pdf
@@ -144,7 +146,7 @@ Which program would you like to use
                 Return UserInput
             End If
         End While
-
+        End
     End Function
     Function GetRandomPlateNumber()
         Dim Rnd As New Random
@@ -167,7 +169,7 @@ Which program would you like to use
         'Add a few random plates to the list of ticketed vehicles
         Dim rnd As New Random
         For i As Integer = 0 To rnd.Next(4, 6)
-            File.AppendAllText("TicketsToGive.txt", GetRandomPlateNumber() & vbNewLine)
+            File.AppendAllText("TicketsToGive.txt", GetRandomPlateNumber() & vbCrLf)
         Next
 
         'Get the times from both cameras
@@ -196,20 +198,60 @@ Which program would you like to use
 
         'If speed is over 70mph, add to the list of tickets to give
         If MPH > 70 Then
-            File.AppendAllText("TicketsToGive.txt", PlateNumber & vbNewLine)
+            File.AppendAllText("TicketsToGive.txt", PlateNumber & vbCrLf)
             Console.WriteLine(Double.Round(MPH, 2) & "Mph, This person has been ticketed")
         Else
             Console.WriteLine(Double.Round(MPH, 2) & "Mph")
         End If
         Console.ReadLine()
     End Sub
+    Function GetMultiDigitInput(Digits)
+        While True
+            Dim UserInput As String = Console.ReadLine()
+            If IsNumeric(UserInput) And Len(UserInput) = Digits Then
+                Return UserInput
+            Else
+                Console.WriteLine("Please enter a valid " & Digits & " digit number")
+            End If
+        End While
+        End
+    End Function
     Sub Thief()
         Console.WriteLine("Please enter your 4 known digits")
-        Dim Digits As String = GetNumericalInput(False, 1000, 9999)
-        Dim AllCombos As New List(Of Integer)
-        Dim UniqueCombos As New List(Of Integer)
+        Dim Digits As String = GetMultiDigitInput(4)
+        Console.WriteLine("The possible combinations are as follows:")
 
+        Dim AllCombos As New List(Of String)
+        Dim UniqueCombos As New List(Of String)
+
+        For i As Integer = 0 To 3
+            For ii As Integer = 0 To 3
+                For iii As Integer = 0 To 3
+                    For iiii As Integer = 0 To 3
+
+                        AllCombos.Add((Digits(i) & Digits(ii) & Digits(iii) & Digits(iiii)))
+
+                    Next
+                Next
+            Next
+        Next
+        'Remove duplicates
+
+        For Each Combo As String In AllCombos 'Check all combinations
+
+            If (Not UniqueCombos.Contains(Combo)) AndAlso (Combo.Contains(Digits(0)) And Combo.Contains(Digits(1)) And Combo.Contains(Digits(2)) And Combo.Contains(Digits(3))) Then
+
+                UniqueCombos.Add(Combo)
+                Console.WriteLine(Combo)
+
+            End If
+        Next
 
     End Sub
 
+
+    Sub Classification()
+
+
+    End Sub
 End Module
