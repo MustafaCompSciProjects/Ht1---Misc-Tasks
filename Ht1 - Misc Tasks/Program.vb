@@ -39,7 +39,6 @@ Module Program
         End While
         End
     End Function
-
     Function SelectProgram()
         Console.WriteLine("
 Which program would you like to use
@@ -55,7 +54,6 @@ Which program would you like to use
 ")
         Return GetNumericalInput(False, 1, 9)
     End Function
-
     Sub Main(args As String())
         Dim ProgramSelected As Integer
 
@@ -91,7 +89,6 @@ Which program would you like to use
 
 
     End Sub
-
     Sub FactorialFinder()
         Console.WriteLine("Please enter the number you want to find the factorial of")
 
@@ -247,11 +244,62 @@ Which program would you like to use
             End If
         Next
 
+        Console.ReadLine()
     End Sub
-
-
+    Function GetYNInput() As String
+        While True
+            Dim UserInput As String = Console.ReadLine
+            If UserInput.ToLower = "n" Then
+                Return "0"
+            ElseIf UserInput.ToLower = "y" Then
+                Return "1"
+            Else
+                Console.WriteLine("Please answer with a Y or N")
+            End If
+        End While
+        End
+    End Function
     Sub Classification()
+        'Declare known distros and pair them with their solutions
+        Dim DistroDict As New Dictionary(Of String, String) From {
+    {"1111", "SparkyLinux (KDE edition)"},
+    {"1110", "Vanilla OS"},
+    {"1101", "Manjaro KDE"},
+    {"1100", "Manjaro (GNOME edition)"},
+    {"1011", "Kubuntu"},
+    {"1010", "Ubuntu"},
+    {"1001", "Fedora KDE Spin"},
+    {"1000", "Fedora Workstation"},
+    {"0111", "SolydXK"},
+    {"0110", "Kali Linux"},
+    {"0101", "Garuda Linux (KDE Dr460nized)"},
+    {"0100", "Arch Linux"},
+    {"0011", "KDE Neon"},
+    {"0010", "Debian"},
+    {"0001", "openSUSE Leap (KDE)"},
+    {"0000", "Slackware"}
+}
 
+        'Get the code of their answers
+        Dim UserCode As String = ""
 
+        Console.WriteLine("Are you new to Linux? [Y/N]")
+        UserCode = UserCode & GetYNInput()
+        Console.WriteLine("Do you prefer constant updates over a long term, stable release? [Y/N]")
+        UserCode = UserCode & GetYNInput()
+        Console.WriteLine("Do you want a Debian based distro? (Reccomended for beginners) [Y/N]")
+        UserCode = UserCode & GetYNInput()
+        Console.WriteLine("Do you want it to look Windows-Like? [Y/N]")
+        UserCode = UserCode & GetYNInput()
+
+        'Match their options to the list of distros
+        Dim SuggestedDistro As String
+        Try
+            SuggestedDistro = DistroDict.Item(UserCode)
+            Console.WriteLine(SuggestedDistro)
+        Catch ex As Exception
+            Console.WriteLine("We don't have a distro for you in our database, maybe have a google, I'm sure the perfect one for you is out there!")
+        End Try
+        Console.ReadLine()
     End Sub
 End Module
