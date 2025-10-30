@@ -3,7 +3,7 @@ Imports System.IO
 Imports System.Numerics
 
 Module Program
-    Function GetNumericalInput(Optional ByVal CanBeDecimal As Boolean = False, Optional ByVal minVal As Integer = -2147483648, Optional ByVal maxVal As Integer = 2147483647)
+    Function GetNumericalInput(Optional ByVal CanBeDecimal As Boolean = False, Optional ByVal minVal As Integer = -2147483648, Optional ByVal maxVal As Integer = 2147483647) 'Min Inclusive, Max Exclusive
         Dim UserInput As String
 
         'Loop until valid input is received which breaks the loop
@@ -22,13 +22,11 @@ Module Program
                         If UserInput = Int(UserInput) Then
                             Return UserInput
                         Else
+
+                            'All other scenarios, re-ask
                             Console.WriteLine("Please enter a valid number")
                         End If
-
                     End If
-
-
-                    'All other scenarios, re-ask
                 Else
                     Console.WriteLine("Please enter a valid number")
                 End If
@@ -385,7 +383,7 @@ Would you like to:
 2. Convert F to C
 3. Quit
 ")
-            Dim UserSelection As Integer = GetNumericalInput(False, 1, 4)
+            Dim UserSelection As Integer = GetNumericalInput(False, 1, 3)
 
             If UserSelection = 1 Then
                 Console.WriteLine("Enter the value you want to convert")
@@ -405,17 +403,17 @@ Would you like to:
             End If
         End While
     End Sub
-
     Sub ArithmeticTest()
-        Dim QuestionSheet As New Dictionary(Of String, Integer)
+        Dim QuestionSheet As New Dictionary(Of String, Decimal)
         Dim rnd As New Random
 
-        For i As Integer = 1 To 10 'Create a random set of questions every time
+        Do 'Create a random set of questions every time
             Dim Symbol As Integer = rnd.Next(0, 4)
-            Dim Value1 As Integer = rnd.Next(0, 13)
-            Dim Value2 As Integer = rnd.Next(0, 13)
+            Dim Value1 As Integer = rnd.Next(1, 13)
+            Dim Value2 As Integer = rnd.Next(1, 13)
+            Dim ListOfDivisors() As Integer = {1, 2, 4, 5, 10} 'Here to prevent infinite decimals
             Dim Equation As String
-            Dim Solution As Integer
+            Dim Solution As Decimal
             If Symbol = 0 Then
                 Equation = Value1 & " + " & Value2
                 Solution = Value1 + Value2
@@ -429,14 +427,88 @@ Would you like to:
                 Solution = Value1 * Value2
 
             Else
+                Value2 = ListOfDivisors(rnd.Next(0, 5))
                 Equation = Value1 & " / " & Value2
                 Solution = Value1 / Value2
 
             End If
 
-            QuestionSheet.Add(Equation, Solution)
-        Next 'Create the question sheet
+            Try
+                QuestionSheet.Add(Equation, Solution)
+            Catch
 
+            End Try
+        Loop Until QuestionSheet.Count = 10 'Create the question sheet
+
+        Console.WriteLine("Welcome to the math test. Please enter your name")
+        Dim PlayerName As String = Console.ReadLine()
+
+
+        While True
+            Console.WriteLine("Please select what you'd like to do")
+            Console.WriteLine("
+1. Take the Test
+2. View your latest scores
+3. Exit
+")
+            Dim UserSelection As Integer = GetNumericalInput(False, 1, 3)
+            If UserSelection = 1 Then
+
+
+                Dim PlayerScore As Integer = 0
+                For Each i In QuestionSheet
+                    Dim iKey As String = i.Key
+                    Dim iVal As Decimal = i.Value
+                    Console.WriteLine("Please solve " & iKey)
+                    If GetNumericalInput(True) = iVal Then
+                        Console.WriteLine("Correct!")
+                        PlayerScore += 1
+                    Else
+                        Console.WriteLine("Wrong, have a go at this one instead")
+                    End If
+                Next
+
+                Console.WriteLine("Your total score was " & PlayerScore)
+                File.AppendAllText(PlayerName.ToUpper & ".save", PlayerScore & vbCrLf)
+
+            ElseIf UserSelection = 2 Then
+
+
+                Try
+                    Dim FileContents As String = File.ReadAllText(PlayerName.ToUpper & ".save")
+
+                    Dim Scores() As String
+                    Scores = FileContents.Split(vbCrLf)
+                    Dim LatestScore As String = 0
+                    Dim SecondLatestScore As String = 0
+                    Dim ThirdLatestScore As String = 0
+
+                    For i = 0 To Scores.Length - 1
+                        If i = Scores.Length - 2 Then
+                            LatestScore = Scores(i)
+                        ElseIf i = Scores.Length - 3 Then
+                            SecondLatestScore = Scores(i)
+                        ElseIf i = Scores.Length - 4 Then
+                            ThirdLatestScore = Scores(i)
+                        End If
+                    Next
+
+                    Console.WriteLine("
+Your latest scores are as follows" & vbCrLf & "1." &
+LatestScore & vbCrLf & "2." &
+SecondLatestScore & vbCrLf & "3." &
+ThirdLatestScore
+)
+                Catch ex As Exception
+                    Console.WriteLine("Sorry, we don't have your latest scores. Try taking the quiz and trying again")
+                End Try
+            Else
+                Exit While
+            End If
+        End While
+    End Sub
+
+    Sub HappyNumbers()
 
     End Sub
 End Module
