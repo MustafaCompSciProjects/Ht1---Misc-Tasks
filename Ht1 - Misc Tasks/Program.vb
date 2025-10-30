@@ -1,4 +1,4 @@
-Imports System
+﻿Imports System
 Imports System.IO
 Imports System.Numerics
 
@@ -73,11 +73,14 @@ Which program would you like to use
                 Console.Clear()
                 Classification()
             ElseIf ProgramSelected = 5 Then
-                Console.WriteLine("5")
+                Console.Clear()
+                FruitMachine()
             ElseIf ProgramSelected = 6 Then
-                Console.WriteLine("6")
+                Console.Clear()
+                UnitConverter()
             ElseIf ProgramSelected = 7 Then
-                Console.WriteLine("7")
+                Console.Clear()
+                ArithmeticTest()
             ElseIf ProgramSelected = 8 Then
                 Console.WriteLine("8")
             ElseIf ProgramSelected = 9 Then
@@ -301,5 +304,139 @@ Which program would you like to use
             Console.WriteLine("We don't have a distro for you in our database, maybe have a google, I'm sure the perfect one for you is out there!")
         End Try
         Console.ReadLine()
+    End Sub
+    Sub FruitMachine()
+        Dim PlayerCredit As Decimal = 0.99D + 0.01D 'Here to work around a VB quirk that keeps decimal places from a calculation
+        Dim PossibleEmojis() As String = {"[Cherry]", "[Bell]", "[Lemon]", "[Orange]", "[Star]", "[Skull]"} 'GOD DAM YOU WINDOWS WITH YOUR SHITTY UNICODE IMPLEMENTATION!!!
+        Dim rnd As New Random
+
+
+        Console.WriteLine("Welcome to Fruit Machine!")
+        While True
+            Console.WriteLine("
+Would you like to:
+1. Play a round of slots
+2. See your balance
+3. Stop Playing
+")
+            Dim UserSelection As Integer = GetNumericalInput(False, 1, 4)
+
+            If UserSelection = 1 Then
+
+                If PlayerCredit < 0.2D Then
+                    Console.WriteLine("You do not have enough money to do this")
+                Else
+                    PlayerCredit += -0.2D
+                    Dim Icon1 As String = PossibleEmojis(rnd.Next(0, 6))
+                    Dim Icon2 As String = PossibleEmojis(rnd.Next(0, 6))
+                    Dim Icon3 As String = PossibleEmojis(rnd.Next(0, 6))
+
+                    Console.WriteLine(Icon1 & Icon2 & Icon3)
+                    If Icon1 = Icon2 And Icon2 = Icon3 Then '3 of the same check
+
+                        If Icon1 = PossibleEmojis(1) Then 'bell check
+                            Console.WriteLine("3 Bells!! 5GBP has been added to your account")
+                            PlayerCredit += 5D
+
+                        ElseIf Icon1 = PossibleEmojis(5) Then 'skull check
+                            Console.WriteLine("3 Skulls, you lose everything")
+                            PlayerCredit = 0D
+
+                        Else 'any other 3 combo
+                            Console.WriteLine("3 in a row! Nice. 1GBP has been added to your account")
+                            PlayerCredit += 1D
+
+                        End If
+
+                    ElseIf Icon1 = Icon2 Or Icon2 = Icon3 Or Icon1 = Icon3 Then
+
+                        If Icon1 = PossibleEmojis(5) Or Icon2 = PossibleEmojis(5) Then '2 skulls check
+                            Console.WriteLine("2 skulls, you lose 1GBP")
+                            PlayerCredit += -1D
+                            If PlayerCredit < 0 Then
+                                PlayerCredit = 0
+                                Console.WriteLine("You're now broke..")
+                            End If
+
+                        Else
+                            Console.WriteLine("2 of the same, you win 50p")
+                            PlayerCredit += 0.5D
+                        End If
+
+                    End If
+                End If
+
+            ElseIf UserSelection = 2 Then
+                Console.WriteLine("You currently have " & PlayerCredit & "GBP in your account")
+
+            ElseIf UserSelection = 3 Then
+                Console.Clear()
+                Exit While
+
+            Else
+                Console.WriteLine("A critical error has occured. Please restart the program")
+            End If
+        End While
+    End Sub
+    Sub UnitConverter()
+        While True
+            Console.WriteLine("
+1. Convert C to F
+2. Convert F to C
+3. Quit
+")
+            Dim UserSelection As Integer = GetNumericalInput(False, 1, 4)
+
+            If UserSelection = 1 Then
+                Console.WriteLine("Enter the value you want to convert")
+                Console.WriteLine("Thats " & CInt(GetNumericalInput(True) * 1.8 + 32) & "°F")
+
+            ElseIf UserSelection = 2 Then
+                Console.WriteLine("Enter the value you want to convert")
+                Console.WriteLine("Thats " & CInt((GetNumericalInput(True) - 32) * 5 / 9) & "°C")
+
+            ElseIf UserSelection = 3 Then
+                Console.Clear()
+                Exit While
+
+            Else
+                Console.WriteLine("A critical error has occured. Please inform the dev to go cry in a corner and fix it")
+
+            End If
+        End While
+    End Sub
+
+    Sub ArithmeticTest()
+        Dim QuestionSheet As New Dictionary(Of String, Integer)
+        Dim rnd As New Random
+
+        For i As Integer = 1 To 10 'Create a random set of questions every time
+            Dim Symbol As Integer = rnd.Next(0, 4)
+            Dim Value1 As Integer = rnd.Next(0, 13)
+            Dim Value2 As Integer = rnd.Next(0, 13)
+            Dim Equation As String
+            Dim Solution As Integer
+            If Symbol = 0 Then
+                Equation = Value1 & " + " & Value2
+                Solution = Value1 + Value2
+
+            ElseIf Symbol = 1 Then
+                Equation = Value1 & " - " & Value2
+                Solution = Value1 - Value2
+
+            ElseIf Symbol = 2 Then
+                Equation = Value1 & " * " & Value2
+                Solution = Value1 * Value2
+
+            Else
+                Equation = Value1 & " / " & Value2
+                Solution = Value1 / Value2
+
+            End If
+
+            QuestionSheet.Add(Equation, Solution)
+        Next 'Create the question sheet
+
+
     End Sub
 End Module
