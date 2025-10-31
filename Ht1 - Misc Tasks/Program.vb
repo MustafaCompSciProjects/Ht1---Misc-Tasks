@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Diagnostics.CodeAnalysis
 Imports System.IO
 Imports System.Numerics
 
@@ -80,7 +81,8 @@ Which program would you like to use
                 Console.Clear()
                 ArithmeticTest()
             ElseIf ProgramSelected = 8 Then
-                Console.WriteLine("8")
+                Console.Clear()
+                HappyNumbers()
             ElseIf ProgramSelected = 9 Then
                 Console.WriteLine("Goodbye, World!")
                 Environment.Exit(0)
@@ -507,8 +509,41 @@ ThirdLatestScore
             End If
         End While
     End Sub
+    Function CheckIfHappy(Input As Integer)
+        Dim SeenValues As New List(Of Integer)
+        Do
+            SeenValues.Add(Input)
+            Dim Sum As Integer = 0
+            For Each Character In Input.ToString
+                Sum += Val(Character) ^ 2
+            Next
 
+            Input = Sum
+        Loop Until SeenValues.Contains(Input) Or Input = 1
+
+        If Input = 1 Then
+            Return True
+        ElseIf SeenValues.Contains(Input) Then
+            Return False
+        Else
+            Return "PANIC"
+        End If
+
+    End Function
     Sub HappyNumbers()
+        Dim HappyNums As New List(Of Integer)
+        Dim ValToTry As Integer = 1
+        While HappyNums.Count < 8
+            If CheckIfHappy(ValToTry) Then
+                HappyNums.Add(ValToTry)
+            End If
+            ValToTry += 1
+        End While
 
+        Console.WriteLine("The first 8 happy numbers are as follows:")
+        For Each i In HappyNums
+            Console.WriteLine(i)
+        Next
+        Console.ReadLine
     End Sub
 End Module
